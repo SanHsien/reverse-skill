@@ -1,4 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/partial-schema.json",
-  "deferrals": {}
+  "deferrals": {
+    "ruff": {
+      "deferredLatest": "0.17.2",
+      "reason": "2026-10-25 reviewed: ruff 0.17.2 passes the CI lint gate (E9,F) unchanged, and CI installs the newest release anyway because requirements-dev.txt is a floor; the declared floor stays 0.16 on purpose, nothing here needs 0.17 features."
+    }
+  }
 }
