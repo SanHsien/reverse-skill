@@ -59,7 +59,7 @@
 **採用**（移植到 main，皆附回歸測試）：
 - #176／issue #175：`skills/scripts/verify-doc-links.py` 補 percent-encoded 本機連結（本 fork 的 `tools/check_links.py` 早已 `unquote`，CI 的另一支驗證器沒有）。連同其測試與 CI 步驟。
 - #181：case review 拒收重複 ID、懸空參照、不合規的 Finding 分類；`consolidate-evidence` 在寫入前拒絕路徑式 ID（例如 `../outside`）與重複 Finding。有路徑逃出 evidence 目錄的風險，所以採用。
-- #182：R7 (radare2) 中文情境基準案例（15 行，純測試）。
+- #182：R7 (radare2) 中文情境基準案例（3 個案例、15 行，純測試）。
 - #179（只取 `skills/config/routing.json` 與 `skills/tests/routing-benchmark.json`）：`\b` 在 .NET／JS 把 CJK 視為 `\w`，「分析这个APK」緊貼 ASCII 關鍵字時沒有詞界而退回 R0，對繁中／簡中為主的使用者是真缺陷；改用 ASCII 專用的 lookaround 邊界，並含其 R3 簽名參數關鍵字與 19 個基準案例。
 - issue #180（上游無對應 PR）：`bootstrap-reverse.ps1` 在 `Set-StrictMode -Version Latest` 下對單一子項目呼叫 `.Count` 會丟例外，本 fork 同一行存在；改成 `@(Get-ChildItem ...)`。
 
