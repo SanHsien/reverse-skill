@@ -1,0 +1,9 @@
+{
+  "repo": "https://github.com/zhaoxuya520/reverse-skill.git",
+  "branch": "main",
+  "reviewed_through": "cab634bd855fc287f6e420c1f36fd1a6b9245960",
+  "reviewed_date": "2026-10-03",
+  "notes": "Initial fork baseline at upstream commit cab634b (v1.0.1+). Reviewed commit history through cab634b, open/closed PRs through #170, and open/closed issues through #166. Initialized Windows-first development environment, fleet maintenance gate, and Traditional Chinese entrypoint.",
+  "reviewed_pr_through": 170,
+  "reviewed_issue_through": 166
+}
