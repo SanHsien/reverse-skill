@@ -31,7 +31,7 @@
 **決定**：將原 `CLAUDE.md` 內容併入 `AGENTS.md`，並刪除 `CLAUDE.md`。同時在 `AGENTS.md` 中完整保留上游 `verify-repository-security.py` 強制要求的 3 個授權同意邊界標記。
 
 **理由**：
-- 依據主人跨 repo 統一標準（2026-09-21 指示），各 repo 只留 `AGENTS.md` 作為單一真相源。
+- 依據維護者跨 repo 統一標準（2026-09-21 指示），各 repo 只留 `AGENTS.md` 作為單一真相源。
 - 完整保留 3 項同意邊界字串，確保上游安全檢驗腳本維持綠燈。
 
 ## 2026-10-03：依賴新鮮度檢查涵蓋 GitHub Actions 與 Python dev 依賴
@@ -39,3 +39,15 @@
 **決定**：`tools/check_dependency_freshness.py` 同時檢查 `requirements-dev.txt`（PyPI）與 `.github/workflows/*.yml` 裡釘選 SHA 的 Actions（GitHub Releases API）。
 
 **理由**：確保 CI 依賴與本機維護工具的版本漂移具備可見性與可查證性。
+
+## 2026-10-24：CodeQL `js/file-access-to-http`（alert #1，`burp-mcp-full/mcp-bridge.js:44`）判讀為設計如此
+
+**決定**：不改程式碼；alert 保留，由維護者決定是否 dismiss。
+
+**資料流證據**：
+- 讀檔來源：`burp-mcp-full/mcp-bridge.js:30-31` 只讀固定路徑 `~/.burp-mcp-token`（`os.homedir()` 拼接常數檔名，無外部輸入影響路徑）；`BURP_MCP_TOKEN` 環境變數存在時連檔案都不讀（`:28`）。
+- 檔案由誰寫：Burp 擴充自己產生隨機 token 並以 owner-only 權限原子寫入同一路徑（`burp-mcp-full/src/main/java/com/burpmcp/McpHttpServer.java:61-79`、`:81-95`）。檔案擁有者即執行 bridge 的使用者本人。
+- 送出內容：檔案內容只進 `Authorization: Bearer` header（`mcp-bridge.js:37`），用在 `GET /tools`（`:44-46`）與 `POST /`（`:93-95`）。不會把任意檔案內容送出。
+- 送往何處：`hostname`/`port` 只來自 `BURP_MCP_HOST`（預設 `127.0.0.1`）與 `BURP_MCP_PORT`（預設 `9876`）環境變數（`mcp-bridge.js:24-25`），與檔案內容無關；對端是只綁 `127.0.0.1` 的 Burp 擴充 HTTP API（`McpHttpServer.java:56`），正是驗這把 token 的服務。
+
+**理由**：這是本機共享密鑰認證的標準做法：token 由服務端產生、寫入使用者家目錄，客戶端讀出後回送給同一個服務。目的地不受檔案內容左右，讀檔路徑固定，外送內容僅限該 token。唯一能把 token 送到別處的方式是使用者自行設定 `BURP_MCP_HOST`，屬使用者自身的設定權限，不構成攻擊面。
