@@ -51,3 +51,23 @@
 - 送往何處：`hostname`/`port` 只來自 `BURP_MCP_HOST`（預設 `127.0.0.1`）與 `BURP_MCP_PORT`（預設 `9876`）環境變數（`mcp-bridge.js:24-25`），與檔案內容無關；對端是只綁 `127.0.0.1` 的 Burp 擴充 HTTP API（`McpHttpServer.java:56`），正是驗這把 token 的服務。
 
 **理由**：這是本機共享密鑰認證的標準做法：token 由服務端產生、寫入使用者家目錄，客戶端讀出後回送給同一個服務。目的地不受檔案內容左右，讀檔路徑固定，外送內容僅限該 token。唯一能把 token 送到別處的方式是使用者自行設定 `BURP_MCP_HOST`，屬使用者自身的設定權限，不構成攻擊面。
+
+## 2026-10-25：上游審查（PR #171–#183、issue #173–#180；commit 水位不動，仍為 `cab634b`）
+
+上游 commit 軸無新項目；PR／issue 軸有 9 個 PR、4 個 issue。`git apply --check` 全部可乾淨套用，因為本 fork 產品碼與上游一致。
+
+**採用**（移植到 main，皆附回歸測試）：
+- #176／issue #175：`skills/scripts/verify-doc-links.py` 補 percent-encoded 本機連結（本 fork 的 `tools/check_links.py` 早已 `unquote`，CI 的另一支驗證器沒有）。連同其測試與 CI 步驟。
+- #181：case review 拒收重複 ID、懸空參照、不合規的 Finding 分類；`consolidate-evidence` 在寫入前拒絕路徑式 ID（例如 `../outside`）與重複 Finding。有路徑逃出 evidence 目錄的風險，所以採用。
+- #182：R7 (radare2) 中文情境基準案例（15 行，純測試）。
+- #179（只取 `skills/config/routing.json` 與 `skills/tests/routing-benchmark.json`）：`\b` 在 .NET／JS 把 CJK 視為 `\w`，「分析这个APK」緊貼 ASCII 關鍵字時沒有詞界而退回 R0，對繁中／簡中為主的使用者是真缺陷；改用 ASCII 專用的 lookaround 邊界，並含其 R3 簽名參數關鍵字與 19 個基準案例。
+- issue #180（上游無對應 PR）：`bootstrap-reverse.ps1` 在 `Set-StrictMode -Version Latest` 下對單一子項目呼叫 `.Count` 會丟例外，本 fork 同一行存在；改成 `@(Get-ChildItem ...)`。
+
+**略過**：
+- #171、#172、#178（field-journal 新文章）、#183（iOS fairplay-decrypt 文件與一行路由）：第三方投稿，上游尚未合併。這類內容會被 skill 載入當作操作指引，未經上游審過不收。觸發條件：上游合併後經 commit 軸抵達，再逐項審。
+- #179 內七篇 field-journal 文件：同上。
+- #174：上游已關閉未合併，內容是 field-journal 文章，同上不收。
+- issue #173（Cursor 用戶端被 Request blocked）：用戶端環境問題，非本 repo 程式缺陷。
+- issue #177（要求把 `reverse-skill.png` 轉成 jpg）：不適用；本 fork 公開入口圖維持 png。
+
+水位：`reviewed_pr_through` 170 → 183、`reviewed_issue_through` 166 → 180、`reviewed_date` 2026-10-25。
