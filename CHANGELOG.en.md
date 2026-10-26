@@ -14,6 +14,10 @@ Adoption and deferral rationale is documented in [`docs/DECISIONS.md`](docs/DECI
 
 ## [Unreleased]
 
+### Fixed
+
+- `tools/check_dependency_freshness.py`: a GitHub Action pin carrying a `# freshness-hold: <reason>` comment always reported `CHECK FAILED` and never the intended `HELD: <reason>`; `--strict` (the CI gate) still failed even though `AGENTS.md` documents the hold comment as the marker that clears the check. Reproduced with a failing test, then fixed `check_failed` and the report rendering (commit `d272355`).
+
 ## [1.0.1] - 2026-10-03
 
 ### Added

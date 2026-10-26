@@ -12,6 +12,10 @@
 
 ## [Unreleased]
 
+### 修正
+
+- `tools/check_dependency_freshness.py`：帶 `# freshness-hold: <理由>` 的 GitHub Action 釘選一律被判定為 `CHECK FAILED`，從未顯示為預期的 `HELD: <理由>`，`--strict`（CI 用）仍會回傳失敗 —— 跟 `AGENTS.md` 承諾「加 hold 註解即可讓紅燈消除」矛盾。已補重現測試並修正 `check_failed` 判斷與報告渲染（commit `d272355`）。
+
 ## [1.0.1] - 2026-10-03
 
 ### 新增
