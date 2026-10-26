@@ -293,7 +293,16 @@ def collect_status(
                 "outdated": bool(
                     minimum and latest and is_newer_version(latest, minimum)
                 ),
-                "check_failed": not minimum or latest is None or incomparable,
+                # A held pin deliberately carries no parsable minimum (the
+                # comment is a reason, not a version) -- that is not a failed
+                # check, it is the point of the hold. Only an unparsable
+                # declaration with no hold, or a failed/incomparable fetch,
+                # should fail the check.
+                "check_failed": (
+                    (not minimum and not package.get("hold"))
+                    or latest is None
+                    or incomparable
+                ),
                 "deferred_reason": reason if deferred else "",
             }
         )
@@ -331,7 +340,13 @@ def _render_table(rows: list[dict[str, object]]) -> list[str]:
     for row in rows:
         if row["check_failed"]:
             status = "CHECK FAILED"
-        elif row.get("hold") and row["outdated"]:
+        elif row.get("hold"):
+            # A hold is a recorded decision, not a transient state: show it
+            # whenever it is present, not only while the floor also reads as
+            # outdated. A held GitHub Action pin has no parsable minimum (the
+            # comment is a reason, not a version), so `outdated` is always
+            # False for it -- gating this branch on `outdated` meant a held
+            # Action pin could never reach it and always fell through to OK.
             status = f"HELD: {row['hold']}"
         elif row.get("deferred_reason") and row["outdated"]:
             status = f"DEFERRED at {row['latest']}: {row['deferred_reason']}"

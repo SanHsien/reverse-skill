@@ -65,3 +65,24 @@ def test_action_pin_with_subdirectory_is_parsed() -> None:
     assert packages[0]["name"] == "github/codeql-action/init"
     assert packages[0]["minimum"] == "4.37.4"
     assert checker.action_repository("github/codeql-action/init") == "github/codeql-action"
+
+
+def test_held_github_action_is_reported_as_held_not_check_failed() -> None:
+    text = (
+        "- uses: actions/checkout@abcdef0123456789012345678901234567890123"
+        " # freshness-hold: pinned deliberately\n"
+    )
+    packages = checker.parse_workflow_actions(text, "ci.yml")
+    rows = checker.collect_status(packages, lambda _: "99.0.0", {})
+
+    assert rows[0]["hold"] == "pinned deliberately"
+    assert not rows[0]["check_failed"], (
+        "a held pin with no parsable minimum must not count as a check failure"
+    )
+    assert not checker.needs_review(rows[0])
+
+    rendered = "\n".join(checker._render_table(rows))
+    assert "HELD: pinned deliberately" in rendered, (
+        "the report must show the hold decision, not fall through to OK"
+    )
+    assert "| OK |" not in rendered
