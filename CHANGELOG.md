@@ -14,6 +14,9 @@
 
 ### 修正
 
+- npm bootstrap 呼叫的 setup 腳本若回傳非零退出碼，現在會保留失敗狀態，不再誤報 capability 安裝成功。
+- PowerShell 深讀回歸：重跑同名 `case-init.ps1` 改為追加 scope 更新事件並保留既有工項；空的路由測試集（含 `-Quick` 篩選後為空）回傳 2，不再假綠。bootstrap 遇未知 capability 回傳 1；npm 後續安裝指令缺失或失敗會回報失敗，不再誤稱成功。新增純本機、無安裝副作用的回歸測試。
+
 - `tools/check_dependency_freshness.py`：帶 `# freshness-hold: <理由>` 的 GitHub Action 釘選一律被判定為 `CHECK FAILED`，從未顯示為預期的 `HELD: <理由>`，`--strict`（CI 用）仍會回傳失敗 —— 跟 `AGENTS.md` 承諾「加 hold 註解即可讓紅燈消除」矛盾。已補重現測試並修正 `check_failed` 判斷與報告渲染（commit `d272355`）。
 
 ## [1.0.1] - 2026-10-03

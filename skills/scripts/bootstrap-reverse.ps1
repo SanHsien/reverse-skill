@@ -962,6 +962,12 @@ function Ensure-Capability {
                     if ($npx) {
                         & $npx $definition.postInstall.Split(' ')
                     }
+                    else {
+                        throw "post-install command unavailable: $($definition.postInstall)"
+                    }
+                }
+                if ($LASTEXITCODE -ne 0) {
+                    throw "post-install failed for $Name (exit code $LASTEXITCODE): $($definition.postInstall)"
                 }
             }
             # Run setup script if specified
@@ -970,6 +976,9 @@ function Ensure-Capability {
                 if (Test-Path -LiteralPath $setupPath) {
                     $shell = Get-PreferredPowerShellPath
                     & $shell -NoProfile -ExecutionPolicy Bypass -File $setupPath -SkipBrowserInstall
+                    if ($LASTEXITCODE -ne 0) {
+                        throw "setup script failed for $Name (exit code $LASTEXITCODE): $setupPath"
+                    }
                 }
             }
             return $true
@@ -1095,7 +1104,7 @@ function Expand-CapabilityDependencies {
 function Test-BootstrapResultsSucceeded {
     param([Parameter(Mandatory = $true)][object[]]$Results)
 
-    return (@($Results | Where-Object { $_.status -eq 'failed' }).Count -eq 0)
+    return (@($Results | Where-Object { $_.status -in @('failed', 'missing-definition') }).Count -eq 0)
 }
 
 $expandedCapabilities = Expand-CapabilityDependencies -Names $Capability

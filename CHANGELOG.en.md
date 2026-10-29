@@ -16,6 +16,9 @@ Adoption and deferral rationale is documented in [`docs/DECISIONS.md`](docs/DECI
 
 ### Fixed
 
+- npm bootstrap now propagates nonzero setup-script exits instead of reporting a successful capability installation.
+- PowerShell deep-review regressions: reinitializing a named case appends a scope-update event and preserves existing work items. Empty routing suites, including empty Quick selections, exit 2 instead of reporting green. Bootstrap exits 1 for unknown capabilities and fails when npm post-install commands are unavailable or return a nonzero exit code. Added offline regressions without installation side effects.
+
 - `tools/check_dependency_freshness.py`: a GitHub Action pin carrying a `# freshness-hold: <reason>` comment always reported `CHECK FAILED` and never the intended `HELD: <reason>`; `--strict` (the CI gate) still failed even though `AGENTS.md` documents the hold comment as the marker that clears the check. Reproduced with a failing test, then fixed `check_failed` and the report rendering (commit `d272355`).
 
 ## [1.0.1] - 2026-10-03

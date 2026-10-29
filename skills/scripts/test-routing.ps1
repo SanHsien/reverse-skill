@@ -4,7 +4,7 @@
 #   powershell -NoProfile -ExecutionPolicy Bypass -File skills/scripts/test-routing.ps1
 #   powershell -File skills/scripts/test-routing.ps1 -Quick          # 只跑 quick 最小回归集
 #   powershell -File skills/scripts/test-routing.ps1 -Benchmark <path> -LogDir <dir>
-# 退出码：0 全绿 / 1 有用例失败（failures 详情写入 LogDir）
+# 退出码：0 全绿 / 1 有用例失败 / 2 无有效测试
 param(
     [string] $Benchmark = '',
     [switch] $Quick,
@@ -42,6 +42,10 @@ New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
 $masterRoute = Join-Path $scriptDir 'master-route.ps1'
 $cases = @($bm.cases)
 if ($Quick) { $cases = @($cases | Where-Object { $_.quick }) }
+if ($cases.Count -eq 0) {
+    Write-Host 'ERROR: no routing cases selected; validation is incomplete.' -ForegroundColor Red
+    exit 2
+}
 
 $fail = New-Object System.Collections.Generic.List[string]
 $pass = 0
