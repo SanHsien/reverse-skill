@@ -1,6 +1,13 @@
 # 全庫風險快照
 
-最後更新：2026-10-04。本檔記錄 fork 自 `zhaoxuya520/reverse-skill`（MIT）的全面審查結論、已知風險與維護邊界。
+最後更新：2026-10-29。本檔記錄 fork 自 `zhaoxuya520/reverse-skill`（MIT）的全面審查結論、已知風險與維護邊界。
+
+## 2026-10-29 PowerShell 逐行深審
+
+- 完整讀過 `master-route.ps1`、`case-init.ps1`、`bootstrap-reverse.ps1`、`test-routing.ps1`、`verify-routing-coherence.ps1`；不宣稱 Kali／實際工具安裝路徑已驗證。
+- 先寫失敗測試再修：同名 case 重跑覆寫 timeline／工項、空路由測試集假綠、未知 capability 假成功、npm post-install／setup 非零退出碼未傳遞。重跑另保留原 `created`、記錄 `updated` 並追加正確的 scope_update 事件。
+- 產品候選 `fd7287e`：本機 `tools/dev_check.ps1` 通過（Python 3.12、33 pytest、44 Quick 路由、coherence、安全邊界、文件連結）；native Sol 獨立審查及修正後聚焦複審為 ship。新增測試只操作暫存 case／stub，未真的安裝工具。
+- Defender 隔離 `waf-bypass.md`／`rce.md`，它們在本機呈未提交刪除；不還原、不停用防護、不把刪除提交，亦不把 gate 綠燈說成已驗證被隔離內容。用戶環境的安全設定決定仍保留於路線圖。
 
 ## 結論
 

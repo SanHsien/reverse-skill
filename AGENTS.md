@@ -101,3 +101,7 @@ pwsh -NoProfile -File tools\dev_check.ps1
 - **PR、push、release 一律指向 `SanHsien/reverse-skill`。** 對上游 `zhaoxuya520/reverse-skill` 開 PR、push 或發 release 需要維護者在當次對話明確同意回貢。
 - 每個 clone 先跑一次 `gh repo set-default SanHsien/reverse-skill`。
 - 開 PR 仍明寫 `gh pr create --repo SanHsien/reverse-skill --base main --head <分支>`，並讀輸出的 URL 確認 owner 為 `SanHsien`。
+
+## 路線圖
+
+- `ROADMAP.md` 是本 repo 後續工作的單一真相源。完成或新增工作時，在同一個 commit 更新它：做完的列刪掉、新工作加進去。不要在其他文件另列待辦。
