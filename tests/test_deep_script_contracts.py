@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import re
 import shutil
 import subprocess
 
@@ -27,7 +28,10 @@ def run_ps(*arguments: str) -> subprocess.CompletedProcess[str]:
     )
 
 
-def test_case_reinitialization_preserves_history_and_workitems(tmp_path: Path) -> None:
+@pytest.mark.parametrize("contract", ["history", "created", "update_event"])
+def test_case_reinitialization_preserves_history_and_workitems(
+    tmp_path: Path, contract: str,
+) -> None:
     arguments = [
         "-File", str(SCRIPTS / "case-init.ps1"),
         "-Hint", "authorized web review", "-CaseName", "history-case",
@@ -36,6 +40,9 @@ def test_case_reinitialization_preserves_history_and_workitems(tmp_path: Path) -
     first = run_ps(*arguments)
     assert first.returncode == 0, first.stdout + first.stderr
     case = tmp_path / "work" / "history-case"
+    scope = case / "scope.md"
+    created = re.search(r"(?m)^- created: (.+)$", scope.read_text(encoding="utf-8-sig"))
+    assert created
     timeline = case / "timeline.md"
     original = timeline.read_bytes() + b"\n\n## operator-event\n- evidence: E-123\n"
     timeline.write_bytes(original)
@@ -47,7 +54,17 @@ def test_case_reinitialization_preserves_history_and_workitems(tmp_path: Path) -
     assert second.returncode == 0, second.stdout + second.stderr
     assert timeline.read_bytes().startswith(original), "case-init erased prior events"
     assert workitems.read_bytes() == expected_items, "case-init reset existing work"
-    assert "- status: granted" in (case / "scope.md").read_text(encoding="utf-8-sig")
+    scope_text = scope.read_text(encoding="utf-8-sig")
+    assert "- status: granted" in scope_text
+    if contract == "created":
+        assert f"- created: {created[1]}" in scope_text, "creation time was reset"
+        updated = re.search(r"(?m)^- updated: (.+)$", scope_text)
+        assert updated and updated[1] != created[1]
+    if contract == "update_event":
+        suffix = timeline.read_bytes()[len(original):].decode("utf-8")
+        assert suffix.count("| lead | scope_update") == 1
+        assert "case scope updated" in suffix
+        assert "case directory created" not in suffix
 
 
 @pytest.mark.parametrize("quick", [False, True])

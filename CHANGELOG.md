@@ -14,6 +14,7 @@
 
 ### 修正
 
+- `case-init` 重跑時保留原始 `created`，另記 `updated`；事件摘要明確區分建立與更新，不再重寫生命週期起點。
 - npm bootstrap 呼叫的 setup 腳本若回傳非零退出碼，現在會保留失敗狀態，不再誤報 capability 安裝成功。
 - PowerShell 深讀回歸：重跑同名 `case-init.ps1` 改為追加 scope 更新事件並保留既有工項；空的路由測試集（含 `-Quick` 篩選後為空）回傳 2，不再假綠。bootstrap 遇未知 capability 回傳 1；npm 後續安裝指令缺失或失敗會回報失敗，不再誤稱成功。新增純本機、無安裝副作用的回歸測試。
 

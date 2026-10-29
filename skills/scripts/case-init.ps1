@@ -209,7 +209,19 @@ if ((Test-Path $routeScript) -and $Hint) {
     }
 }
 
-$created = Get-Date -Format 'o'
+$updated = Get-Date -Format 'o'
+$created = $updated
+$scopePath = Join-Path $caseRoot 'scope.md'
+$timelinePath = Join-Path $caseRoot 'timeline.md'
+$hasTimeline = Test-Path -LiteralPath $timelinePath
+$hasScope = Test-Path -LiteralPath $scopePath
+$isReinitialization = $hasScope -or $hasTimeline
+if ($hasScope) {
+    $previousScope = [System.IO.File]::ReadAllText($scopePath)
+    $meta = [regex]::Match($previousScope, '(?ms)^## meta\r?\n(?<body>.*?)(?=^## |\z)')
+    $previousCreated = [regex]::Match($meta.Groups['body'].Value, '(?m)^- created: ([^\r\n]+)')
+    if ($previousCreated.Success) { $created = $previousCreated.Groups[1].Value.Trim() }
+}
 if ($assets.Count -gt 0) {
     $assetsBlock = ($assets | ForEach-Object { "  - $_" }) -join [Environment]::NewLine
 } else {
@@ -225,10 +237,11 @@ $timelineNext = if ($ready) {
 } else {
     'fill scope auth + in_scope; set ready_for_act'
 }
+$summaryAction = if ($isReinitialization) { 'case scope updated' } else { 'case directory created' }
 $timelineSummary = if ($ready) {
-    'case directory created; scope ready_for_act=true'
+    "$summaryAction; scope ready_for_act=true"
 } else {
-    'case directory created; scope pending auth'
+    "$summaryAction; scope pending auth"
 }
 
 $scope = @"
@@ -237,6 +250,7 @@ $scope = @"
 ## meta
 - case_id: $CaseName
 - created: $created
+- updated: $updated
 - operator: local
 - project_root: $projectRoot
 - primary_skill: $primary
@@ -296,12 +310,10 @@ $assetsBlock
 - skills/ops/IDENTITY.md
 "@
 
-$timelinePath = Join-Path $caseRoot 'timeline.md'
-$hasTimeline = Test-Path -LiteralPath $timelinePath
-$timelineEvent = if ($hasTimeline) { 'scope_update' } else { 'init' }
-$timelineDelta = if ($hasTimeline) { 'case_scope_updated' } else { 'case_initialized' }
+$timelineEvent = if ($isReinitialization) { 'scope_update' } else { 'init' }
+$timelineDelta = if ($isReinitialization) { 'case_scope_updated' } else { 'case_initialized' }
 $timeline = @"
-## $created | lead | $timelineEvent
+## $updated | lead | $timelineEvent
 - action: case-init
 - command_or_ref: skills/scripts/case-init.ps1
 - result_summary: $timelineSummary

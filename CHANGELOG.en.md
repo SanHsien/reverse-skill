@@ -16,6 +16,7 @@ Adoption and deferral rationale is documented in [`docs/DECISIONS.md`](docs/DECI
 
 ### Fixed
 
+- Case reinitialization retains the original `created` timestamp, records `updated`, and distinguishes scope updates from initial creation in timeline summaries.
 - npm bootstrap now propagates nonzero setup-script exits instead of reporting a successful capability installation.
 - PowerShell deep-review regressions: reinitializing a named case appends a scope-update event and preserves existing work items. Empty routing suites, including empty Quick selections, exit 2 instead of reporting green. Bootstrap exits 1 for unknown capabilities and fails when npm post-install commands are unavailable or return a nonzero exit code. Added offline regressions without installation side effects.
 
