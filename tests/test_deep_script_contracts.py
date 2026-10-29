@@ -92,6 +92,36 @@ def test_unknown_bootstrap_capability_has_failure_exit() -> None:
     assert result.returncode == 1, "unknown capability incorrectly reported success"
 
 
+def test_supply_chain_function_loader_preserves_ci_exit(tmp_path: Path) -> None:
+    """Run the real loader in a copied sandbox, not its user-profile fixtures."""
+    driver = (SCRIPTS / "test-bootstrap-supply-chain.ps1").read_text(
+        encoding="utf-8-sig",
+    )
+    loader = driver.split("# BEGIN offline bootstrap function loader", 1)[1].split(
+        "# END offline bootstrap function loader", 1,
+    )[0]
+    scripts = tmp_path / "scripts"
+    library = scripts / "lib"
+    library.mkdir(parents=True)
+    shutil.copy2(SCRIPTS / "bootstrap-reverse.ps1", scripts)
+    for name in ("ToolDiscovery.ps1", "BootstrapSupplyChain.ps1"):
+        shutil.copy2(SCRIPTS / "lib" / name, library)
+    probe = scripts / "probe.ps1"
+    probe.write_text(
+        "$ErrorActionPreference = 'Stop'\n$global:LASTEXITCODE = 0\n"
+        + loader
+        + "\nGet-Command Ensure-Capability,Start-AnythingAnalyzerService "
+        "-ErrorAction Stop | Out-Null\nWrite-Output 'loader completed'\n",
+        encoding="utf-8-sig",
+    )
+    literal = str(probe).replace("'", "''")
+    result = run_ps(
+        "-Command", f". '{literal}'; if ($LASTEXITCODE) {{ exit $LASTEXITCODE }}",
+    )
+    assert "loader completed" in result.stdout, result.stdout + result.stderr
+    assert result.returncode == 0, "function loading contaminated the CI exit status"
+
+
 def load_capability_function() -> str:
     bootstrap = str(SCRIPTS / "bootstrap-reverse.ps1").replace("'", "''")
     # Parse and load just Ensure-Capability, as the repository's own bootstrap

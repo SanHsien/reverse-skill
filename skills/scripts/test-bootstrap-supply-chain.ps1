@@ -151,7 +151,23 @@ printf "pnpm|%s\n" "$*" >> "$BOOTSTRAP_PS_LOG"
         }
     }
 
-    . (Join-Path $PSScriptRoot 'bootstrap-reverse.ps1') -Capability '__test_missing__' -SkipRefresh | Out-Null
+    # BEGIN offline bootstrap function loader
+    $bootstrapPath = Join-Path $PSScriptRoot 'bootstrap-reverse.ps1'
+    $bootstrapTokens = $null
+    $bootstrapErrors = $null
+    $bootstrapAst = [System.Management.Automation.Language.Parser]::ParseFile(
+        $bootstrapPath, [ref]$bootstrapTokens, [ref]$bootstrapErrors)
+    if ($bootstrapErrors.Count -gt 0) { throw 'Bootstrap parse failed in supply-chain test' }
+    foreach ($functionName in @('Ensure-Capability', 'Start-AnythingAnalyzerService')) {
+        $functionAst = $bootstrapAst.Find({
+            param($node)
+            $node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and
+                $node.Name -eq $functionName
+        }, $true)
+        if ($null -eq $functionAst) { throw "Missing bootstrap function: $functionName" }
+        . ([scriptblock]::Create($functionAst.Extent.Text))
+    }
+    # END offline bootstrap function loader
     $script:gitCloneDefinition = [pscustomobject]@{
         name = 'test-git-clone'
         bootstrapKind = 'git-clone'

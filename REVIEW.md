@@ -8,6 +8,7 @@
 - 先寫失敗測試再修：同名 case 重跑覆寫 timeline／工項、空路由測試集假綠、未知 capability 假成功、npm post-install／setup 非零退出碼未傳遞。重跑另保留原 `created`、記錄 `updated` 並追加正確的 scope_update 事件。
 - 產品候選 `fd7287e`：本機 `tools/dev_check.ps1` 通過（Python 3.12、33 pytest、44 Quick 路由、coherence、安全邊界、文件連結）；native Sol 獨立審查及修正後聚焦複審為 ship。新增測試只操作暫存 case／stub，未真的安裝工具。
 - Defender 隔離 `waf-bypass.md`／`rce.md`，它們在本機呈未提交刪除；不還原、不停用防護、不把刪除提交，亦不把 gate 綠燈說成已驗證被隔離內容。用戶環境的安全設定決定仍保留於路線圖。
+- 首次發布的 CI 揭露供應鏈測試以未知 capability 執行主流程來載入函式，正確的失敗退出碼因此污染測試結果。離線 probe 先重現 exit 1，再改為只用 AST 載入兩個待測函式，不清除或吞掉真實失敗；後續完整本機 gate 為 34 pytest、44/44 Quick、coherence／security／links 全綠。供應鏈測試的用戶目錄 fixture 未在本機執行，交由隔離 CI runner 驗證。
 
 ## 結論
 
