@@ -293,15 +293,16 @@ def collect_status(
                 "outdated": bool(
                     minimum and latest and is_newer_version(latest, minimum)
                 ),
-                # A held pin deliberately carries no parsable minimum (the
-                # comment is a reason, not a version) -- that is not a failed
-                # check, it is the point of the hold. Only an unparsable
-                # declaration with no hold, or a failed/incomparable fetch,
-                # should fail the check.
+                # A held pin is an explicit maintenance decision to freeze the
+                # declaration regardless of upstream release availability or
+                # version parsing. It deliberately carries no required minimum,
+                # and should not fail the check even if the upstream has no
+                # releases/tags or returns an incomparable tag. Only an un-held
+                # declaration with no minimum, or an un-held failed/incomparable
+                # fetch, fails the check.
                 "check_failed": (
-                    (not minimum and not package.get("hold"))
-                    or latest is None
-                    or incomparable
+                    not package.get("hold")
+                    and (not minimum or latest is None or incomparable)
                 ),
                 "deferred_reason": reason if deferred else "",
             }
@@ -347,7 +348,19 @@ def _render_table(rows: list[dict[str, object]]) -> list[str]:
             # comment is a reason, not a version), so `outdated` is always
             # False for it -- gating this branch on `outdated` meant a held
             # Action pin could never reach it and always fell through to OK.
-            status = f"HELD: {row['hold']}"
+            #
+            # `fetch` returns None both for "no release/tag exists" and for an API
+            # failure, so a held row whose latest is unknown or not a comparable
+            # version was never actually compared. Say so rather than letting a
+            # plain `HELD:` read as a checked result.
+            unchecked = (
+                row["latest"] == "unknown" or release_key(str(row["latest"])) is None
+            )
+            status = (
+                f"HELD (latest not checked): {row['hold']}"
+                if unchecked
+                else f"HELD: {row['hold']}"
+            )
         elif row.get("deferred_reason") and row["outdated"]:
             status = f"DEFERRED at {row['latest']}: {row['deferred_reason']}"
         elif row["outdated"]:

@@ -86,3 +86,32 @@ def test_held_github_action_is_reported_as_held_not_check_failed() -> None:
         "the report must show the hold decision, not fall through to OK"
     )
     assert "| OK |" not in rendered
+
+
+def test_held_dependency_overrides_missing_or_incomparable_latest() -> None:
+    text = (
+        "- uses: actions/checkout@abcdef0123456789012345678901234567890123"
+        " # freshness-hold: pinned deliberately\n"
+    )
+    packages = checker.parse_workflow_actions(text, "ci.yml")
+
+    # When latest fetch returns None (no releases/tags or API failure)
+    rows_none = checker.collect_status(packages, lambda _: None, {})
+    assert rows_none[0]["hold"] == "pinned deliberately"
+    assert not rows_none[0]["check_failed"], (
+        "a held pin must not count as check_failed even if latest cannot be fetched"
+    )
+    rendered_none = "\n".join(checker._render_table(rows_none))
+    # fetch() returns None for both "no release/tag" and "API failure"; a hold must not
+    # present that as a plain checked HELD row.
+    assert "HELD (latest not checked): pinned deliberately" in rendered_none
+    assert "CHECK FAILED" not in rendered_none
+
+    # When latest is incomparable (e.g. tag without numeric release)
+    rows_incomparable = checker.collect_status(packages, lambda _: "invalid-tag", {})
+    assert not rows_incomparable[0]["check_failed"], (
+        "a held pin must not count as check_failed when latest version is incomparable"
+    )
+    rendered_incomp = "\n".join(checker._render_table(rows_incomparable))
+    assert "HELD (latest not checked): pinned deliberately" in rendered_incomp
+    assert "CHECK FAILED" not in rendered_incomp

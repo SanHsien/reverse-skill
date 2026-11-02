@@ -12,7 +12,6 @@
 | 項目 | 為什麼 | 驗收方式 | 建議執行者 | 證據 |
 | --- | --- | --- | --- | --- |
 | 決定本機 clone 是否加入 Windows Defender 排除清單 | 深掃報告查明：`skills/pentest-tools/src-hunter/references/playbooks/rce.md` 在本機被 Defender 隔離（`Get-MpThreatDetection` 有兩次偵測），本機工作目錄因此一直顯示該檔被刪。遠端檔案完整；復原會被再次隔離；屬安全設定，agent 不自行改 | 維護者決定後在 `docs/DECISIONS.md` 記一則（排除或不排除，附理由）；若排除，本機 `git status` 不再顯示該檔被刪；若不排除，註明本機該檔缺失屬預期，且不得提交那筆刪除 | 維護者 | 接續開發報告（2026-10-25）「本機未提交變更」；`Get-MpThreatDetection` |
-| 決定 `# freshness-hold` 是否也蓋過「抓不到 latest」的失敗 | 目前 hold 只清「因為 hold 而沒有 minimum」；帶 hold 但 repo 在 Releases／tags 都查無版本的 Action pin 仍是 `check_failed` 而讓 `--strict` 紅燈。這是 hold 語意取捨（「不管新舊」或「只不管版本比較」） | 在 `docs/DECISIONS.md` 記決定；若改為蓋過，`tools/check_dependency_freshness.py` 改動附重現測試（修前紅修後綠）、`pytest` 與 `tools\dev_check.ps1` 綠；若不改，DECISIONS 寫明理由 | Claude Opus | 深掃報告（2026-10-26）「已知但刻意不擴大修的邊角案例」；`tools/check_dependency_freshness.py:48`、`:301`、`:341`（hold 標記與 `check_failed` 判斷） |
 
 ## 中期：等條件成立再做
 

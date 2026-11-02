@@ -71,3 +71,16 @@
 - issue #177（要求把 `reverse-skill.png` 轉成 jpg）：不適用；本 fork 公開入口圖維持 png。
 
 水位：`reviewed_pr_through` 170 → 183、`reviewed_issue_through` 166 → 180、`reviewed_date` 2026-10-25。
+
+## 2026-10-31：依賴新鮮度檢查中 `# freshness-hold` 蓋過「抓不到 latest」與版本不可比失敗
+
+**決定**：`tools/check_dependency_freshness.py` 的 `# freshness-hold: <理由>` 標記除清空 minimum 檢查外，亦蓋過 `latest is None`（Releases/tags 查無版本或 API 失敗）與 `incomparable`（標籤非數字版本無法比較）之 `check_failed` 判定。
+
+**理由**：
+- `AGENTS.md` 明確規定依賴新鮮度檢查紅燈的正當出口為「維持宣告：在宣告那一行加 `# freshness-hold: <理由>`」。
+- 若 Action pin 來源在 GitHub Releases/tags 皆未發布版本（例如純以 commit SHA 釘選的內部或第三方 Action），或上游 tag 未遵循數字版本規則，過去 `check_failed` 仍會被判定為真，導致即使維護者已審查並依規定加註 hold，`--strict` 仍持續報錯。
+- 維護者在宣告行留下 hold 標記與具體理由，已構成對該依賴凍結的顯式決策；此時不再讓已知並獲批的凍結宣告造成 check 失敗。但 `fetch` 回 None 同時代表「查無版本」與「API 失敗」，「查不到」不等於「沒有」，所以報表對這類列不能只寫 `HELD: <理由>`：latest 為 `unknown`，或不是可比較的版本時，狀態欄顯示 `HELD (latest not checked): <理由>`，明講最新版本沒有被檢查；latest 可比較時維持 `HELD: <理由>`。這是顯示層的區分，不改變是否紅燈。
+- 未標記 hold 的依賴仍維持最嚴格的完整檢查（查無版本或解析失敗依舊報 `CHECK FAILED` 並讓 `--strict` 報警）。
+
+**限制**：
+- 僅限明確標記 `# freshness-hold:` 的項目放行；未標記 hold 者若抓不到 latest 仍視為 check 失敗。
