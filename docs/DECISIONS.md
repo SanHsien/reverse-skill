@@ -84,3 +84,18 @@
 
 **限制**：
 - 僅限明確標記 `# freshness-hold:` 的項目放行；未標記 hold 者若抓不到 latest 仍視為 check 失敗。
+
+
+## 2026-11-02：上游 PR #184–#186 與 issue #187
+
+commit 軸無新增（仍是 `cab634b`）。三個 PR 取目前 head 讀完 diff，並用 `grep -nE '\S\s{40,}\S|eval\(|new Function|globalThis|[A-Za-z0-9+/]{120,}'` 掃隱藏內容，皆無命中。
+
+**採用**：
+- #186（`3500e59`，open，+35／-0，只動 `skills/tests/routing-benchmark.json`）：為 R33 的 `must` 正則補 7 個 `quick:false` 案例。純測試、只加不改；套用後完整 routing benchmark `TOTAL=207 PASS=207 FAIL=0`（原 200），`tools\dev_check.ps1` 綠。
+
+**略過**：
+- #184（`a852b05`，open，+127／-3）：field-journal 新文章，第三方投稿、上游尚未合併；這類內容會被 skill 載入當操作指引，未經上游審過不收（同 2026-10-25 的 #171／#172／#178）。觸發條件：上游合併後經 commit 軸抵達再逐項審。
+- #185（`4090cac`，CLOSED，+528／-5，10 檔）：提交者在 2026-11-01 留言「誤操作開出的 PR，已撤回」，上游沒有收。內容為脫殼工具進 catalog 與 manifest，屬提交者自己的工具鏈擴充，非缺陷修正。其中 `test-routing.sh` 寫死裸 `bash`（本 fork 同樣，`skills/scripts/test-routing.sh:46`）在 Windows 會命中 WSL 空殼，但本 fork 的 Windows 閘門跑的是 `test-routing.ps1`，不經過該行，故不單獨摘取。觸發條件：若將來把 `test-routing.sh` 納入 Windows 閘門就回來修。
+- issue #187（標題「Electrical Circuit Institute」，內文空、無留言、無對應 PR）：與本專案無關，不處理。
+
+水位：`reviewed_pr_through` 183 → 186、`reviewed_issue_through` 180 → 187、`reviewed_date` 2026-11-02。
