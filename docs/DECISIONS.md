@@ -1,5 +1,13 @@
 # 維護決策
 
+## 2026-11-06：保留維護工具下限，以常態政策記錄 freshness-hold
+
+**決定**：保留 `pytest>=9.1` 與 `ruff>=0.16`，在各宣告行加入具體的 `freshness-hold` 理由；移除被此常態政策取代的 Ruff 0.17.2 暫緩紀錄。這不是精確釘版，安裝仍允許最新版。
+
+**理由**：本次 PyPI 回報 pytest 9.2.0 與 Ruff 0.17.3。維護測試沒有要求 pytest 9.2 專屬功能，Ruff gate 僅使用 E9、F；沒有相容性需求足以提高下限。已閱讀 [pytest 9.2 變更紀錄](https://docs.pytest.org/en/stable/changelog.html#pytest-9-2-0-2026-10-27) 與 [Ruff 0.17.3 發佈說明](https://github.com/astral-sh/ruff/releases/tag/0.17.3)。常態下限政策應使用行末 hold，而非每次新版發佈便延長暫緩紀錄。
+
+**限制與重審條件**：hold 表達下限政策，不代表驗證所有支援版本；若測試或規則實際依賴新版功能，再調整下限並記錄相容性證據。本次未修改 Actions 釘選或 workflow；本機 GitHub API 回傳 HTTP 403 rate limit exceeded，Actions latest 尚無法完成查證，不以 hold 掩蓋查詢失敗。
+
 ## 2026-10-03：建立 Windows-first 維護型 fork
 
 **決定**：fork `zhaoxuya520/reverse-skill`，保留 MIT License 與完整 Git 歷史，預設分支維持 `main` 以降低與上游同步摩擦。本線聚焦繁中公開入口、Windows 開發 gate、Windows CI，以及逐筆審查的上游追蹤。

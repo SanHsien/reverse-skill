@@ -16,6 +16,7 @@ Adoption and deferral rationale is documented in [`docs/DECISIONS.md`](docs/DECI
 
 ### Fixed
 
+- Kept the `pytest>=9.1` and `ruff>=0.16` floors and recorded the standing policy with inline `freshness-hold` reasons, replacing the expired Ruff 0.17.2 deferral. Newer releases remain allowed without raising compatibility floors to silence freshness warnings.
 - Supply-chain tests now load only the functions under test instead of invoking bootstrap with an unknown capability, preventing its expected failure exit from contaminating the GitHub Actions test result.
 - Case reinitialization retains the original `created` timestamp, records `updated`, and distinguishes scope updates from initial creation in timeline summaries.
 - npm bootstrap now propagates nonzero setup-script exits instead of reporting a successful capability installation.

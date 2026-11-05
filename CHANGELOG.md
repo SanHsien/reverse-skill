@@ -14,6 +14,7 @@
 
 ### 修正
 
+- 維護依賴保留 `pytest>=9.1`、`ruff>=0.16`，以行末 `freshness-hold` 記錄常態下限政策，取代過期的 Ruff 0.17.2 暫緩紀錄；仍允許安裝最新版，不調高下限消除新鮮度警示。
 - 供應鏈回歸測試改為只載入待測函式，不再用未知 capability 執行 bootstrap 主流程，避免預期的失敗退出碼讓 GitHub Actions 誤報整個測試失敗。
 - `case-init` 重跑時保留原始 `created`，另記 `updated`；事件摘要明確區分建立與更新，不再重寫生命週期起點。
 - npm bootstrap 呼叫的 setup 腳本若回傳非零退出碼，現在會保留失敗狀態，不再誤報 capability 安裝成功。

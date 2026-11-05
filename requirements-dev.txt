@@ -1,2 +1,2 @@
-pytest>=9.1
-ruff>=0.16
+pytest>=9.1 # freshness-hold: Keep the supported floor; maintenance tests do not require pytest 9.2 features, and newer releases remain allowed.
+ruff>=0.16 # freshness-hold: Keep the supported floor; the E9,F gate does not require Ruff 0.17 features, and newer releases remain allowed.
