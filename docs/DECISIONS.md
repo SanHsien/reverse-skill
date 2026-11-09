@@ -94,6 +94,13 @@
 - 僅限明確標記 `# freshness-hold:` 的項目放行；未標記 hold 者若抓不到 latest 仍視為 check 失敗。
 
 
+## 2026-11-10：上游 PR #188
+
+commit 軸無新增（仍是 `cab634b`）。issue 軸無新增（仍止於 #187）。PR 取目前 head（`4da8afe`）讀完 `gh pr diff` 全文；其中兩個小改動檔（`xss跨站脚本.md`、`playbooks/xss.md`）另行人工覆核，確認是把既有 payload 行塗成空白並同步刪掉對應的語法解析說明，無新增內容，故未對其跑隱藏內容掃描；兩個被整檔刪除的大檔（`waf-bypass.md` -6501、`playbooks/rce.md` -4826）屬純刪除，同理未掃描。
+
+**略過**：
+- #188（`4da8afe`，open，+3／-11332，4 檔）：第三方貢獻者 `yasen123456` 刪除 `skills/pentest-tools/src-hunter/references/payloader/waf-bypass.md`（-6501）與 `playbooks/rce.md`（-4826），並塗改兩個 XSS 參考檔各一處 payload 範例。上游尚未合併。本 fork 在 2026-10-03「建立 Windows-first 維護型 fork」已明確限制「不覆寫或隨意變動產品目錄中的漏洞研究語料與各 Skill 本體」，這張 PR 正是對該語料的整檔刪改，與既有限制牴觸；且仍是未經上游審過的第三方內容（同 2026-11-02 #184 的理由）。觸發條件：若上游合併，重新審查時要同時權衡語料保留限制，而非直接套用。
+
 ## 2026-11-02：上游 PR #184–#186 與 issue #187
 
 commit 軸無新增（仍是 `cab634b`）。三個 PR 取目前 head 讀完 diff，並用 `grep -nE '\S\s{40,}\S|eval\(|new Function|globalThis|[A-Za-z0-9+/]{120,}'` 掃隱藏內容，皆無命中。
