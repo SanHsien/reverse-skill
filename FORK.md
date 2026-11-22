@@ -29,8 +29,10 @@
 | `.github/workflows/upstream-check.yml` | 每週自動檢查上游更新 |
 | `.github/workflows/dependency-freshness.yml` | 每月自動檢查依賴新鮮度 |
 | `docs/DECISIONS.md` / `docs/UPSTREAM.md` / `docs/DEVELOPMENT.md` | fork 維護決策、上游紀錄與本機開發指南 |
+| `skills/SKILL.md` | 路由契約補上第 0 步同意閘，與 `RULES.md` 一致（2026-11-22，見 `docs/DECISIONS.md`） |
+| `skills/binary-diff/SKILL.md` | 批量處理建議不寫死模型名（2026-11-22，見 `docs/DECISIONS.md`） |
 
-產品 `skills/`、`plugins/`、`kali/`、`burp-mcp-full/`、`CTF-Sandbox-Orchestrator/` 以上游為準。
+產品 `skills/`、`plugins/`、`kali/`、`burp-mcp-full/`、`CTF-Sandbox-Orchestrator/` 以上游為準，上表列出的檔案除外。
 
 ## 分支與 remote
 

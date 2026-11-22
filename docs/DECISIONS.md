@@ -154,3 +154,10 @@ commit 軸無新增（仍是 `cab634b`）。三個 PR 取目前 head 讀完 diff
 - issue #187（標題「Electrical Circuit Institute」，內文空、無留言、無對應 PR）：與本專案無關，不處理。
 
 水位：`reviewed_pr_through` 183 → 186、`reviewed_issue_through` 180 → 187、`reviewed_date` 2026-11-02。
+
+## 2026-11-22：路由 skill 補同意閘、binary-diff 不寫死模型名（提示詞稽核）
+
+- **`skills/SKILL.md` 加第 0 步 `GATE`，第 1、2 步改成「已獲批的」router／case-init**。原文「CRITICAL…必须立即执行」「`NOW`：跑平台原生 router」完全沒提同意，`RULES.md`（AGENTS.md 指定的行為鏈唯一真相源）卻要求 *Explicit user approval is required before running any repository script*，router 與 case-init 也寫成 *approved*。只讀 skill 的 agent 會跳過同意閘直接跑腳本。這是收緊，不放寬任何邊界。歷史被壓成 `fb1bed8`，排不出兩份誰先誰後，所以以 `RULES.md` 為準。
+- **`skills/binary-diff/SKILL.md` 的批量處理建議**：「中等函数用 deepseek」「超大函数切 gpt-4o 或 claude」改成依函式大小選上下文夠大的模型。原文要表達的只是函式越大需要的上下文越大，寫死模型名會隨換代悄悄過期。
+- 刻意不改：`malware-analysis/SKILL.md` 的「Issue #65」「补丁 N」出處標記（規則本身是有事故出處的硬門）；`skills/SKILL.md:18`「路由無法命中必須先聯網」（目的可能是防止硬塞到不合適模組）。
+- 兩個檔都是上游檔，已登記在 `FORK.md`「與上游的差異」。上游同步時這兩處要手動保留。

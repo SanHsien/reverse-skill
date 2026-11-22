@@ -10,8 +10,9 @@ description: Routes reverse engineering, exploitation, penetration testing, malw
 
 读完本文件后，不允许只回复“已读/已理解”。必须按顺序执行：
 
-1. `NOW`：跑平台原生 router（Windows `scripts/master-route.ps1`；Linux/macOS/Kali `scripts/master-route.sh`），从 `config/routing.json` 定 PRIMARY；疑难再读 `routing.md` 三轴附录。
-2. `NOW`：平台原生 `case-init` 落地当前分析项目的 `work/<case>/scope.md`；**auth 未 granted 禁止对目标 ACT**。本地离线样本使用 `offline-sample` preset + explicit sample；Force 不得绕过硬门。
+0. `GATE`：先依 `RULES.md` 的 ACTIVATION AND CONSENT GATE 取得同意：列出要跑的指令与预期副作用（写档、下载、启动服务、联网、改客户端配置），用户明确同意后才跑任何仓库脚本。读取或审查本仓库不算授权执行。
+1. `NOW`：跑已获批的平台原生 router（Windows `scripts/master-route.ps1`；Linux/macOS/Kali `scripts/master-route.sh`），从 `config/routing.json` 定 PRIMARY；疑难再读 `routing.md` 三轴附录。
+2. `NOW`：已获批的平台原生 `case-init` 落地当前分析项目的 `work/<case>/scope.md`；**auth 未 granted 禁止对目标 ACT**。本地离线样本使用 `offline-sample` preset + explicit sample；Force 不得绕过硬门。
 3. `ACT`：立即打开 PRIMARY `SKILL.md` 执行 ACTION REQUIRED。
 4. `NEXT`：工具路径只认 `tool-index.md`；缺工具 → 平台原生 bootstrap（仅 manifest）。
 5. 结论用 Evidence→Finding→Path。报告/journal 是 SHOULD，除非用户要交付物。
