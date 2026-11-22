@@ -7,8 +7,13 @@ on:
   push:
   pull_request:
 
+# Fork hardening (upstream issue #209 / PR #215): read-only token, bounded runtimes.
+permissions:
+  contents: read
+
 jobs:
   routing-tests:
+    timeout-minutes: 20
     name: routing tests (${{ matrix.os }})
     strategy:
       fail-fast: false
@@ -44,6 +49,10 @@ jobs:
       - name: Parse contracts (route-scope + IDA lock)
         shell: pwsh
         run: ./skills/scripts/test-parse-contracts.ps1
+
+      - name: Skill name uniqueness (metadata contract)
+        shell: pwsh
+        run: ./skills/scripts/test-skill-name-uniqueness.ps1
 
       - name: Journal PR title safety
         shell: pwsh
@@ -137,6 +146,7 @@ jobs:
         run: ./skills/scripts/verify-doc-facts.ps1
 
   sh-syntax:
+    timeout-minutes: 15
     name: shell script syntax check
     runs-on: ubuntu-latest
     steps:
@@ -165,6 +175,11 @@ jobs:
           bash skills/scripts/test-routing.sh
           bash skills/scripts/test-bootstrap-manifest.sh
           bash skills/scripts/test-bash-workflow.sh
+          # APK decode manifest summary (system grep)
+          bash skills/scripts/test-apk-decode-manifest.sh
+
+          # Offline IDA patch-plan validation (issue #136)
+          python3 skills/ida-reverse/scripts/test-apply-asm-patch.py
 
           scratch="$(mktemp -d)"
           trap 'rm -rf "$scratch"' EXIT
@@ -317,6 +332,7 @@ jobs:
           Write-Host 'All non-ASCII .ps1 carry a UTF-8 BOM'
 
   leak-scan:
+    timeout-minutes: 10
     name: field-journal leak scan
     runs-on: ubuntu-latest
     steps:
@@ -326,6 +342,7 @@ jobs:
         run: ./skills/scripts/scan-leaks.ps1 -Path skills/field-journal
 
   case-contract:
+    timeout-minutes: 10
     name: case contract test (ctf-demo)
     runs-on: ubuntu-latest
     steps:
@@ -351,6 +368,7 @@ jobs:
         run: python3 skills/scripts/verify-repository-security.py
 
   gradle-wrapper-validation:
+    timeout-minutes: 10
     name: Gradle wrapper validation
     runs-on: ubuntu-latest
     steps:
@@ -358,6 +376,7 @@ jobs:
       - uses: gradle/actions/wrapper-validation@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
 
   version-check:
+    timeout-minutes: 10
     name: version consistency
     runs-on: ubuntu-latest
     steps:
@@ -377,6 +396,7 @@ jobs:
           Write-Host "Version OK: $v"
 
   fork-maintenance:
+    timeout-minutes: 20
     name: fork maintenance (${{ matrix.os }})
     strategy:
       fail-fast: false

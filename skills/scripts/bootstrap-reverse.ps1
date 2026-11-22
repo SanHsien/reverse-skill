@@ -22,6 +22,18 @@ $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
 $OutputEncoding = [System.Text.UTF8Encoding]::new($false)
 
+foreach ($tmpVar in @('TEMP', 'TMP')) {
+    $tmpVal = [Environment]::GetEnvironmentVariable($tmpVar)
+    if ([string]::IsNullOrWhiteSpace($tmpVal)) { continue }
+    try {
+        $resolvedTmp = (Get-Item -LiteralPath $tmpVal -ErrorAction Stop).FullName
+        if (-not [string]::IsNullOrWhiteSpace($resolvedTmp)) {
+            [Environment]::SetEnvironmentVariable($tmpVar, $resolvedTmp, 'Process')
+        }
+    }
+    catch { }
+}
+
 . (Join-Path $PSScriptRoot 'lib\ToolDiscovery.ps1')
 . (Join-Path $PSScriptRoot 'lib\BootstrapSupplyChain.ps1')
 

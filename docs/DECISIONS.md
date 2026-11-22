@@ -1,5 +1,35 @@
 # 維護決策
 
+## 2026-11-22：上游審查（commit `cab634b..b972ad0` 100 筆、PR #189–#240、issue #207–#241）
+
+上游在 2026-11-14 一次合併大量積壓 PR。commit 軸 100 筆對應的 PR 已全部合併，所以以「上游合併後的內容」為審查對象：`git diff cab634b b972ad0` 全文過 `eval(`／`new Function`／`curl|sh`／`iwr|iex`／`Invoke-Expression`／120 字元以上 base64／40 格以上隱藏空白／新 URL／「ignore／忽略／system prompt」類詞掃描，field-journal 另跑 `skills/scripts/scan-leaks.ps1`（61 檔 0 命中）。套用方式是以 `cab634b` 為 base 對每個採用檔做三方合併，保留本 fork 既有修正（`bootstrap-reverse.ps1` 的 post-install／setup exit code 檢查、`test_review_case.py` 的 symlink skip）。
+
+**採用**（commit 軸）：
+- 程式修正：#167（`085b3e4`，Windows 8.3 短路徑 TEMP 正規化、yara64 winget `file-glob` 探測；`.Count` 部分本 fork 已在 2026-10-25 修過）、#155（`0cf542d`，`case-init.sh` 的 `auth.basis` 預設與允許清單對齊 `case-init.ps1`、`extract-summaries.ps1` 輸出模組目錄、`verify-doc-facts.ps1` 由 benchmark 推導案例數、文件錯字與雙平台熱路徑）、#160（`d6c64c8`，`decode.sh` 改 `grep -oE`，macOS BSD grep 無 `-P`）、#164（`b1a6d3c`，Codex adapter 改名 `reverse-skill-adapter`＋名稱唯一性測試）、#193／#194（R5 `.net` 錨定、R14 LLM 紅隊關鍵字壓過 R10）、#183（`27df518`，fairplay 路由一行＋iOS 文件）、#195（`recon.sh` 改 `sed -n` 避開 pipefail SIGPIPE）、#196（`refresh-tool-index.sh` TSV 欄位清洗）。
+- 純測試：#162、#191（R41、R39 基準案例）；#182、#186 先前已採用。benchmark 207 → 221。
+- 新內容（上游已合併、掃描無命中）：#146（IDA 調試器＋patch plan，`apply-asm-patch.py` 預設 dry-run、只連使用者指定的 ida-pro-mcp 端點，預設 `127.0.0.1:13337`）、#169（Go／Rust 無依賴分診腳本與 Ghidra headless 腳本）、field-journal 文章 #132、#141、#157、#168（手動套用）、#171、#178、#179 內七篇、#184、#189，以及 `_index.md`。ROADMAP 要求逐項審的 #171（APK 離線驗證流程）、#178（Wails Go 剝離還原）、#179（CJK 詞界、CDP、網路傳輸、工具索引等七篇經驗）、#183（fairplay-decrypt 離線解密，需該帳號 16 位元組憑據）皆為分析經驗或工具說明，無對 agent 的指令性文字、無外連下載腳本，採用。
+- CI：`ci.yml` 加名稱唯一性、APK manifest、IDA patch-plan 測試步驟；`macos-bash-compat.yml` 涵蓋 `apk-reverse/scripts`；`auto-merge-journal.yml` 失敗留言條件修正。
+
+**Fork 差異（刻意與上游不同）**：
+- `verify-doc-facts.ps1` 的英文 README 檢查改讀 `README.en.md`（本 fork 的 `README.md` 是繁中入口）；`README.md`／`README.en.md` 案例數同步為 221。
+- `ci.yml` 加頂層 `permissions: contents: read` 與各 job `timeout-minutes`（上游 issue #209、PR #215 的內容，上游未合併；本 fork 的 CI 沒有需要寫入權限的步驟，直接在 fork 落地）。
+
+**略過**：
+- #170（`.marvis/` Tencent Marvis adapter）：內文是「AI 自主決策紀律」，要求不重複詢問、卡住時自行嘗試突破、使用者離線時全自主推進，會削弱本 repo `AGENTS.md` 的同意邊界，屬提示詞注入式的行為覆寫；且 `name` 與核心 router 重名。觸發條件：上游改寫為不改變同意邊界的純路由入口。
+- #143（`orca.yaml`）：worktree 建立時以 `-ExecutionPolicy Bypass` 自動執行腳本，違反「執行 repo 腳本前需明確同意」。不重新考慮，除非改成手動觸發。
+- #147（`docker/`、`.dockerignore`、`test-docker-assets.sh`、PLATFORMS 的 Docker 段）：未釘版的 `kalilinux/kali-rolling:latest` 基底與 apt／pipx 下載面，不在 Windows-first 維護範圍，也無法套用本 fork 的釘版／新鮮度政策。觸發條件：維護者要提供容器環境。
+- #192（README 圖片改走 jsDelivr free-imgbed CDN）：新增第三方外連端點，本 fork 維持 repo 內圖檔（`README_zh.md` 已還原為本地路徑）。
+- 上游 `CHANGELOG.md` 條目與英文 `README.md` 改寫：本 fork 這兩檔是 fork 自有文件。
+- #190（CLOSED 未合併）、#240（open，「operator-policy standing-grant」標記可讓 agent 對網路目標自行記錄授權，改動 `AGENTS.md`、`RULES.md` 與 `verify-repository-security.py`，削弱授權門禁）：不收；若上游合併，經 commit 軸抵達時仍依同一理由拒絕。
+
+**延後**（open、上游未合併，依「未經上游合併的第三方投稿不收」；38 筆 head 釘在 `tools/upstream_baseline.json` 的 `monitored`，head 或狀態變動即重審）：#197–#206、#210、#211、#213、#214、#216–#239。38 筆皆以 `gh pr diff` 取目前 head 全文（共 5785 行）過同一組掃描，命中只有測試夾具的 `.invalid`／`.test` 網址與 XML namespace，無新外連端點或遙測；#213 動到 `case-guard`（in_scope 解析範圍），合併後審查要確認只收緊不放寬。其中 #219、#239 修 `pe_exports.py` 的 PE32 ImageBase 偏移（PE32 應在 opt+28，現行讀 opt+24），#221 修 `apply-asm-patch.py` 遇 MCP 錯誤仍繼續套用，屬本次採用內容的已知缺陷：上游合併後優先採用；若 30 天內未合併，本 fork 自行補失敗測試再修。
+
+**Issue**：#209 已在 fork 落地（見上）；#207、#208（Kali 選用腳本的相對路徑、雙 writer 的 tool-index schema）延後到對應 PR #217／#218 合併；#212（使用者安裝求助，無可重現資訊）不處理；#241（Claude Code adapter 功能請求）延後到上游實作。
+
+**紅→綠**：還原舊 `routing.json` 時新 benchmark 案例失敗，套用後全綠；還原舊 Codex adapter `SKILL.md` 時 `test-skill-name-uniqueness.ps1` exit 1（重名 `reverse-skill-router`），改名後通過；`verify-doc-facts.ps1` 在 `README.en.md` 仍寫 175／173 時 FAIL，更新後通過。`decode.sh` 的 `grep -P` 問題只在 BSD grep 重現，本機 GNU grep 測不出紅燈，由 `macos-bash-compat` workflow 覆蓋。
+
+水位：`reviewed_through` `cab634b` → `b972ad0`、`reviewed_pr_through` 188 → 240、`reviewed_issue_through` 187 → 241、`reviewed_date` 2026-11-22。
+
 ## 2026-11-06：保留維護工具下限，以常態政策記錄 freshness-hold
 
 **決定**：保留 `pytest>=9.1` 與 `ruff>=0.16`，在各宣告行加入具體的 `freshness-hold` 理由；移除被此常態政策取代的 Ruff 0.17.2 暫緩紀錄。這不是精確釘版，安裝仍允許最新版。

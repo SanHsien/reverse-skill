@@ -1,9 +1,201 @@
 {
   "repo": "https://github.com/zhaoxuya520/reverse-skill.git",
   "branch": "main",
-  "reviewed_through": "cab634bd855fc287f6e420c1f36fd1a6b9245960",
-  "reviewed_date": "2026-11-10",
-  "notes": "Initial fork baseline at upstream commit cab634b (v1.0.1+). Reviewed commit history through cab634b, open/closed PRs through #170, and open/closed issues through #166. Initialized Windows-first development environment, fleet maintenance gate, and Traditional Chinese entrypoint. 2026-10-25: triaged PRs through #183 and issues through #180 (see docs/DECISIONS.md). 2026-11-02: triaged PRs #184-#186 and issue #187 (see docs/DECISIONS.md). 2026-11-10: triaged PR #188, no new issues (see docs/DECISIONS.md).",
-  "reviewed_pr_through": 188,
-  "reviewed_issue_through": 187
+  "reviewed_through": "b972ad0e90f26d8f044828f004da22a4a585da12",
+  "reviewed_date": "2026-11-22",
+  "notes": "Initial fork baseline at upstream commit cab634b (v1.0.1+). Reviewed commit history through cab634b, open/closed PRs through #170, and open/closed issues through #166. Initialized Windows-first development environment, fleet maintenance gate, and Traditional Chinese entrypoint. 2026-10-25: triaged PRs through #183 and issues through #180 (see docs/DECISIONS.md). 2026-11-02: triaged PRs #184-#186 and issue #187 (see docs/DECISIONS.md). 2026-11-10: triaged PR #188, no new issues (see docs/DECISIONS.md). 2026-11-22: reviewed commits cab634b..b972ad0 (100), PRs #189-#240 and issues #207-#241; open PRs deferred are pinned in monitored (see docs/DECISIONS.md).",
+  "reviewed_pr_through": 240,
+  "reviewed_issue_through": 241,
+  "monitored": [
+    {
+      "item": "pr#197",
+      "head": "3b883d7",
+      "state": "open"
+    },
+    {
+      "item": "pr#198",
+      "head": "a347f50",
+      "state": "open"
+    },
+    {
+      "item": "pr#199",
+      "head": "02bba27",
+      "state": "open"
+    },
+    {
+      "item": "pr#200",
+      "head": "8dd0f95",
+      "state": "open"
+    },
+    {
+      "item": "pr#201",
+      "head": "9cf86ef",
+      "state": "open"
+    },
+    {
+      "item": "pr#202",
+      "head": "d1751e7",
+      "state": "open"
+    },
+    {
+      "item": "pr#203",
+      "head": "23d3833",
+      "state": "open"
+    },
+    {
+      "item": "pr#204",
+      "head": "0bac7c4",
+      "state": "open"
+    },
+    {
+      "item": "pr#205",
+      "head": "9c57d2b",
+      "state": "open"
+    },
+    {
+      "item": "pr#206",
+      "head": "b553800",
+      "state": "open"
+    },
+    {
+      "item": "pr#210",
+      "head": "fd0f180",
+      "state": "open"
+    },
+    {
+      "item": "pr#211",
+      "head": "5ee663b",
+      "state": "open"
+    },
+    {
+      "item": "pr#213",
+      "head": "b6b3a01",
+      "state": "open"
+    },
+    {
+      "item": "pr#214",
+      "head": "cb5567f",
+      "state": "open"
+    },
+    {
+      "item": "pr#216",
+      "head": "9643390",
+      "state": "open"
+    },
+    {
+      "item": "pr#217",
+      "head": "2151f12",
+      "state": "open"
+    },
+    {
+      "item": "pr#218",
+      "head": "f1a4b33",
+      "state": "open"
+    },
+    {
+      "item": "pr#219",
+      "head": "ab7877d",
+      "state": "open"
+    },
+    {
+      "item": "pr#220",
+      "head": "d6507f0",
+      "state": "open"
+    },
+    {
+      "item": "pr#221",
+      "head": "ee83c26",
+      "state": "open"
+    },
+    {
+      "item": "pr#222",
+      "head": "0a77a9f",
+      "state": "open"
+    },
+    {
+      "item": "pr#223",
+      "head": "9658340",
+      "state": "open"
+    },
+    {
+      "item": "pr#224",
+      "head": "d23c0a1",
+      "state": "open"
+    },
+    {
+      "item": "pr#225",
+      "head": "f82686a",
+      "state": "open"
+    },
+    {
+      "item": "pr#226",
+      "head": "dd8c053",
+      "state": "open"
+    },
+    {
+      "item": "pr#227",
+      "head": "1bb06fc",
+      "state": "open"
+    },
+    {
+      "item": "pr#228",
+      "head": "31252cf",
+      "state": "open"
+    },
+    {
+      "item": "pr#229",
+      "head": "36602d0",
+      "state": "open"
+    },
+    {
+      "item": "pr#230",
+      "head": "463c229",
+      "state": "open"
+    },
+    {
+      "item": "pr#231",
+      "head": "2f12b8d",
+      "state": "open"
+    },
+    {
+      "item": "pr#232",
+      "head": "1650626",
+      "state": "open"
+    },
+    {
+      "item": "pr#233",
+      "head": "1087ac1",
+      "state": "open"
+    },
+    {
+      "item": "pr#234",
+      "head": "a79ad98",
+      "state": "open"
+    },
+    {
+      "item": "pr#235",
+      "head": "50f716f",
+      "state": "open"
+    },
+    {
+      "item": "pr#236",
+      "head": "44c285d",
+      "state": "open"
+    },
+    {
+      "item": "pr#237",
+      "head": "eb86921",
+      "state": "open"
+    },
+    {
+      "item": "pr#238",
+      "head": "aa35cda",
+      "state": "open"
+    },
+    {
+      "item": "pr#239",
+      "head": "092afbd",
+      "state": "open"
+    }
+  ]
 }

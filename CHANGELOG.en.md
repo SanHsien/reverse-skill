@@ -16,6 +16,7 @@ Adoption and deferral rationale is documented in [`docs/DECISIONS.md`](docs/DECI
 
 ### Fixed
 
+- Upstream review through `b972ad0` (PR #240, issue #241): adopted the bug fixes, routing fixes (benchmark 207 -> 221), IDA patch plan, Go/Rust triage scripts and merged field-journal entries; skipped the Marvis adapter, `orca.yaml`, Docker and the README CDN images; pinned 38 unmerged upstream PRs in `monitored`. CI now runs with a read-only token and job timeouts. Rationale: `docs/DECISIONS.md` 2026-11-22.
 - Kept the `pytest>=9.1` and `ruff>=0.16` floors and recorded the standing policy with inline `freshness-hold` reasons, replacing the expired Ruff 0.17.2 deferral. Newer releases remain allowed without raising compatibility floors to silence freshness warnings.
 - Supply-chain tests now load only the functions under test instead of invoking bootstrap with an unknown capability, preventing its expected failure exit from contaminating the GitHub Actions test result.
 - Case reinitialization retains the original `created` timestamp, records `updated`, and distinguishes scope updates from initial creation in timeline summaries.
