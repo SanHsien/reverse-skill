@@ -54,6 +54,10 @@ jobs:
         shell: pwsh
         run: ./skills/scripts/test-skill-name-uniqueness.ps1
 
+      - name: case-init auth basis fails closed (ps1 + sh)
+        shell: pwsh
+        run: ./skills/scripts/test-case-init-auth-basis.ps1
+
       - name: Journal PR title safety
         shell: pwsh
         run: ./skills/scripts/test-workflow-title-safety.ps1

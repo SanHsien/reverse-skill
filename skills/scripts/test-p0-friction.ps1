@@ -179,7 +179,7 @@ $labName = 'p0-lab-' + (Get-Date -Format 'HHmmss')
     -PackageRoot $PackageRoot `
     -ProjectRoot $PackageRoot `
     -AuthGranted `
-    -AuthBasis 'public_training_lab' `
+    -AuthBasis 'lab_only' `
     -EvidenceOfAuth 'PortSwigger intentionally vulnerable public site example' `
     -TargetUrl 'https://ginandjuice.shop/' `
     -NetworkProfile 'lab_only' `

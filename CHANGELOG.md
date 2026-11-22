@@ -14,6 +14,7 @@
 
 ### 修正
 
+- `case-init.ps1`／`case-init.sh` 遇到不在允許清單的授權依據改為直接拒絕（exit 2、不建立 case），不再悄悄改寫成 `own_system` 或照單寫入；撤回採用缺乏合法授權依據的上游 field-journal 投稿 #184。
 - 上游審查至 `b972ad0`（PR #240、issue #241）：採用 100 筆 commit 中的程式修正、路由修正（benchmark 207 → 221）、IDA patch plan、Go／Rust 分診腳本與已合併的 field-journal；略過 Marvis adapter、`orca.yaml`、Docker 與 README CDN 圖；38 個上游未合併 PR 釘入 `monitored`。CI 加唯讀 token 與 job 逾時。理由見 `docs/DECISIONS.md` 2026-11-22。
 - 維護依賴保留 `pytest>=9.1`、`ruff>=0.16`，以行末 `freshness-hold` 記錄常態下限政策，取代過期的 Ruff 0.17.2 暫緩紀錄；仍允許安裝最新版，不調高下限消除新鮮度警示。
 - 供應鏈回歸測試改為只載入待測函式，不再用未知 capability 執行 bootstrap 主流程，避免預期的失敗退出碼讓 GitHub Actions 誤報整個測試失敗。

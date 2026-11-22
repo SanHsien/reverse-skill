@@ -1,5 +1,15 @@
 # 維護決策
 
+## 2026-11-22（追加）：撤回 playmoney 投稿、`case-init` 授權依據改為失敗即拒絕
+
+獨立驗收 `807ad2f` 後提出兩點，依本 repo 自己的授權規則處理：
+
+**撤回採用**：`skills/field-journal/2026-10-30_js-encrypted-envelope-exchange-playmoney-rebuild.md`（上游 #184）。該文自述 `auth_basis: public_passive_observation（无站方授权…）`，不在 `skills/ops/scope-contract.md` 的允許清單（`written_contract | bug_bounty_scope | ctf_public | own_system | lab_only`）；內容是在無站方授權下，從第三方博弈站前端定位金鑰、離線解碼其 AES 加密 API 信封並重建。`RULES.md`／`scope.md` 的硬門禁要求對目標動手前要有允許清單內的依據，repo 內沒有任何規則允許「公開被動觀察」作為依據。這份 skill 包會被 agent 載入當操作範例，不收。已從 `_index.md` 三處移除並調整統計（真實項目 37 → 36、總條目 54 → 53）。觸發條件：上游補上允許清單內的依據（例如站方書面授權）並經重新審查。
+
+**其他已採用投稿的依據檢查**：逐篇查 `auth_basis` 與目標描述。`own_system` 三篇（09-07、09-29 Go/Rust）合規；09-20（業主授權樣本、離線靜態）、10-16 Wails（使用者自有程式）、11-11（owner-operated 離線樣本）是用自由文字寫的自有／授權樣本，語意落在 `own_system`／`written_contract`，保留。沒有 `auth_basis` 的九篇（09-17 Mir2 範例走 `-Preset offline-sample`；09-29 Android 註明已授權實機；10-09 離線 APK；10-16 的七篇是路由包自身、本機工具索引、CDP／代理運維與保真驗收經驗）不含對第三方服務破解保護的步驟，保留。
+
+**`case-init` 失敗即拒絕**：上游 #155 讓 `case-init.sh` 把不在允許清單的 `--auth-basis` 悄悄改寫成 `own_system`；`case-init.ps1` 則完全不檢查，任意字串都會寫進 `scope.md`。兩者現在都在建立 case 目錄前檢查，不合法就印出被拒的值與允許清單、exit 2，而且不留目錄。新增 `skills/scripts/test-case-init-auth-basis.ps1`（ps1 必跑，有 bash 時一併驗 sh）：修前 6 項失敗（兩支腳本都 exit 0、錯誤訊息沒有點名被拒的值、留下目錄），修後全過；已接進 `ci.yml` 與 `tools\dev_check.ps1`。`test-p0-friction.ps1` 原本用 `public_training_lab`（同樣不在清單），改為 `lab_only`。
+
 ## 2026-11-22：上游審查（commit `cab634b..b972ad0` 100 筆、PR #189–#240、issue #207–#241）
 
 上游在 2026-11-14 一次合併大量積壓 PR。commit 軸 100 筆對應的 PR 已全部合併，所以以「上游合併後的內容」為審查對象：`git diff cab634b b972ad0` 全文過 `eval(`／`new Function`／`curl|sh`／`iwr|iex`／`Invoke-Expression`／120 字元以上 base64／40 格以上隱藏空白／新 URL／「ignore／忽略／system prompt」類詞掃描，field-journal 另跑 `skills/scripts/scan-leaks.ps1`（61 檔 0 命中）。套用方式是以 `cab634b` 為 base 對每個採用檔做三方合併，保留本 fork 既有修正（`bootstrap-reverse.ps1` 的 post-install／setup exit code 檢查、`test_review_case.py` 的 symlink skip）。

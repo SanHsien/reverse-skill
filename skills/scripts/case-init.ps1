@@ -100,6 +100,14 @@ if (-not [string]::IsNullOrWhiteSpace($NetworkProfile) -and
     throw "Invalid -NetworkProfile '$NetworkProfile'. Allowed: offline, lab_only, authorized_target_only, unrestricted_lab (aliases: lab, authorized, auth, offline_only)."
 }
 
+# Authorization basis must come from the scope-contract allow-list
+# (skills/ops/scope-contract.md). Fail closed before any case directory exists.
+$allowedBasis = @('written_contract', 'bug_bounty_scope', 'ctf_public', 'own_system', 'lab_only')
+if ($allowedBasis -cnotcontains $AuthBasis) {
+    [Console]::Error.WriteLine("Invalid -AuthBasis '$AuthBasis'. Allowed: $($allowedBasis -join ', '). No case was created.")
+    exit 2
+}
+
 $workRoot = Join-Path $projectRoot 'work'
 $caseRoot = Join-Path $workRoot $CaseName
 $dirs = @('evidence', 'notes', 'report')

@@ -73,6 +73,10 @@ Invoke-Step -Label "Routing coherence & supply-chain pin gate" -Exe $pwshExe -Ar
     "-NoProfile", "-File", "skills\scripts\verify-routing-coherence.ps1"
 )
 
+Invoke-Step -Label "case-init auth basis fails closed" -Exe $pwshExe -Arguments @(
+    "-NoProfile", "-File", "skills\scripts\test-case-init-auth-basis.ps1"
+)
+
 if ($FullRouting) {
     Invoke-Step -Label "Routing regression (full benchmark)" -Exe $pwshExe -Arguments @(
         "-NoProfile", "-File", "skills\scripts\test-routing.ps1"

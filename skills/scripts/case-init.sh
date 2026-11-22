@@ -124,6 +124,17 @@ if [[ -n "$NETWORK_PROFILE" ]]; then
   esac
 fi
 
+# Authorization basis must come from the scope-contract allow-list
+# (skills/ops/scope-contract.md). Fail closed before any case directory exists:
+# an unknown basis is never rewritten into a valid-looking one.
+case "$AUTH_BASIS" in
+  written_contract|bug_bounty_scope|ctf_public|own_system|lab_only) ;;
+  *)
+    echo "Invalid --auth-basis '$AUTH_BASIS'. Allowed: written_contract, bug_bounty_scope, ctf_public, own_system, lab_only. No case was created." >&2
+    exit 2
+    ;;
+esac
+
 CASE_ROOT="$PROJECT_ROOT/work/$CASE_NAME"
 mkdir -p "$CASE_ROOT/evidence" "$CASE_ROOT/notes" "$CASE_ROOT/report"
 
@@ -136,11 +147,6 @@ if [[ -n "$AUTH_STATUS" ]]; then
     *) echo "WARN: ignoring invalid --auth-status '$AUTH_STATUS'" >&2 ;;
   esac
 fi
-# Align with case-init.ps1 + scope-contract allow-list (see issue #149).
-case "$AUTH_BASIS" in
-  written_contract|bug_bounty_scope|ctf_public|own_system|lab_only) ;;
-  *) AUTH_BASIS="own_system" ;;
-esac
 
 if [[ -n "$EVIDENCE_OF_AUTH" ]]; then
   evidence_auth="$EVIDENCE_OF_AUTH"
