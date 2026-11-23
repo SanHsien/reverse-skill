@@ -4,7 +4,21 @@
 name: CI
 
 on:
+  # Fork patch (docs/DECISIONS.md 2026-11-23, Actions usage): pushes run on main only (other
+  # branches are covered by pull_request) and skip changes that only touch fork notes and
+  # records. Pull requests stay unfiltered and keep the full OS matrix.
   push:
+    branches: [main]
+    paths-ignore:
+      - "ROADMAP.md"
+      - "REVIEW.md"
+      - "FORK.md"
+      - "NOTICE.md"
+      - "upstream-review-report.md"
+      - "dependency-freshness-report.md"
+      - "docs/DECISIONS.md"
+      - "docs/UPSTREAM.md"
+      - "tools/upstream_baseline.json"
   pull_request:
 
 # Fork hardening (upstream issue #209 / PR #215): read-only token, bounded runtimes.
@@ -17,8 +31,9 @@ jobs:
     name: routing tests (${{ matrix.os }})
     strategy:
       fail-fast: false
+      # Pushes test the native Windows run only; pull requests also run Linux (pwsh shim).
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: ${{ fromJSON(github.event_name == 'push' && '["windows-latest"]' || '["windows-latest", "ubuntu-latest"]') }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -404,8 +419,10 @@ jobs:
     name: fork maintenance (${{ matrix.os }})
     strategy:
       fail-fast: false
+      # Pure-Python suite: pushes run it on Linux only (the Windows gate is tools/dev_check.ps1
+      # before every push); pull requests run both.
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: ${{ fromJSON(github.event_name == 'push' && '["ubuntu-latest"]' || '["windows-latest", "ubuntu-latest"]') }}
     runs-on: ${{ matrix.os }}
     env:
       PYTHONUTF8: "1"

@@ -1,5 +1,22 @@
 # 維護決策
 
+## 2026-11-23：GitHub 因 Actions 用量過大停用本 fork 的 Actions，削減用量
+
+**量測**（`gh run list -L 100`，2026-10-04..11-22）：CI 30 次 push（push 觸發所有分支）、CodeQL 25 次 push（2 個語言 job）、Upstream check 15 次 push、Dependency freshness 5 次 push；排程本來就是每週（CodeQL、Upstream check）或每月（Dependency freshness），不是主要來源。用量來自每次 push 的 CI：routing tests 與 fork maintenance 各 Windows + Linux 兩格（Windows 計費 x2），共 4 個 job 加 5 個 Linux job。
+
+| 檔案 | 改動（前 → 後） |
+| --- | --- |
+| `ci.yml` | push 觸發：所有分支 → 只 `main`（其他分支由 pull_request 涵蓋），並略過只改維護紀錄的提交（`ROADMAP.md`、`REVIEW.md`、`FORK.md`、`NOTICE.md`、兩份報告、`docs/DECISIONS.md`、`docs/UPSTREAM.md`、`tools/upstream_baseline.json`）。push 的 matrix：routing tests Windows + Linux → 只 Windows；fork maintenance Windows + Linux → 只 Linux（Windows 側提交前由 `tools\dev_check.ps1` 跑）。pull request 兩個 matrix 維持 Windows + Linux。 |
+| `codeql.yml` | push 只在 Python／JS／TS 原始碼或該 workflow 改動時跑（原：每次 push）；pull request 與每週排程不變 |
+
+**不動**：`upstream-check.yml`、`dependency-freshness.yml`、`macos-bash-compat.yml`（皆已有路徑篩選或排程，且是維護所需檢查）、`auto-merge-journal.yml`（只在 PR 觸發）。
+
+**預估**：每次 push 的計費分鐘約 -50%，加上紀錄類提交略過與非 main 分支不再重複跑，總用量約減半以上。
+
+**還原**：把兩個 matrix 還原成靜態 `[windows-latest, ubuntu-latest]`、push 觸發還原成無篩選、移除 codeql 的 `paths`。
+
+**重審條件**：Actions 重新啟用後再量一次；仍被限制就再降頻。
+
 ## 2026-11-22（追加）：撤回 playmoney 投稿、`case-init` 授權依據改為失敗即拒絕
 
 獨立驗收 `807ad2f` 後提出兩點，依本 repo 自己的授權規則處理：
